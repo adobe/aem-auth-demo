@@ -1,0 +1,3 @@
+{
+  "publishHost": "$[env:PUBLISH_URL;default=http://localhost:8085]"
+}

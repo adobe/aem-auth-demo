@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "path.pattern": "/content/aem-auth-demo/us/en/oauth2-authenticated",
+  "redirect.path": "/content/aem-auth-demo/us/en/error.html",
+  "error.message": "No request cookie named sling.oauth-request-key found"
+}

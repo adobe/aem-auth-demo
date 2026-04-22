@@ -1,0 +1,6 @@
+{
+  "connection": "oidc-connection",
+  "storeAccessToken":true,
+  "storeIdToken":true,
+  "storeRefreshToken":true
+}

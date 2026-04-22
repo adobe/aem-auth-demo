@@ -1,0 +1,8 @@
+{
+  "sling.auth.requirements":[
+    "+/libs/granite/oauth/content/authorization",
+    "+/content/aem-auth-demo/us/en/oauth2-authenticated",
+    "+/content/aem-auth-demo/us/en/saml-authenticated",
+    "+/bin/aem-auth-demo/secret-data"
+  ]
+}

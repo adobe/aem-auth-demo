@@ -1,0 +1,12 @@
+{
+  "callbackUri":"$[env:OIDC_CALLBACK;default=http://localhost:8085/content/aem-auth-demo/us/en/oauth2-authenticated/j_security_check]",
+  "path":[
+    "/content/aem-auth-demo/us/en/oauth2-authenticated"
+  ],
+  "idp":"oidc-idp",
+  "defaultConnectionName":"oidc-connection",
+  "audience": [ "https://my-aem.com" ],
+  "enableSPInitiatedSingleLogout": true,
+  "logoutRedirectPath": "/content/aem-auth-demo/us/en.html",
+  "logoutRedirectAllowedHosts": [ "localhost", "host.docker.internal" ]
+}

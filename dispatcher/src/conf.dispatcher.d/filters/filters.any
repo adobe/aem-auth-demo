@@ -1,0 +1,28 @@
+#
+# This file contains the filter ACL, and can be customized.
+#
+# By default, it includes the default filter ACL.
+#
+
+$include "./default_filters.any"
+
+# Allow components JSON model
+/0101 { /type "allow" /extension "json" /selectors "model" /path "/content/*" }
+
+# Allow manifest.webmanifest files located in the content
+/0102 { /type "allow" /extension "webmanifest" /path "/content/*/manifest" }
+
+# Allow OIDC authentication endpoints
+/0103 { /type "allow" /method "GET" /url "/content/*/j_security_check" }
+/0104 { /type "allow" /method "POST" /url "/content/*/j_security_check" }
+/0105 { /type "allow" /method "GET" /url "*/oauth2-authenticated/j_security_check" }
+/0106 { /type "allow" /method "POST" /url "*/oauth2-authenticated/j_security_check" }
+
+# Allow Logout
+/0107 { /type "allow" /method "GET" /url "/system/sling/logout" }
+
+# Allow Secret Data Servlet
+/0108 { /type "allow" /method "GET" /url "/bin/aem-auth-demo/secret-data" }
+
+# Allow SAML HTTP POST to ../saml_login end points
+/0190 { /type "allow" /method "POST" /url "*/saml_login" }

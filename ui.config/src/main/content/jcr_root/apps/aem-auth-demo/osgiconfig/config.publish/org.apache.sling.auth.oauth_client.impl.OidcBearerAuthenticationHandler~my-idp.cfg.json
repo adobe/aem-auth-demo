@@ -1,0 +1,9 @@
+{
+  "connectionName":"oidc-connection",
+  "path":[
+    "/bin/aem-auth-demo/secret-data"
+  ],
+  "idp":"oidc-idp",
+  "validatorName":"offlineTokenValidator",
+  "service.ranking:Integer": -5
+}

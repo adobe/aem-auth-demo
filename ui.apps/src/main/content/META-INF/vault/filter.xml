@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/aem-auth-demo/clientlibs"/>
+    <filter root="/apps/aem-auth-demo/components"/>
+    <filter root="/apps/aem-auth-demo/i18n"/>
+</workspaceFilter>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/conf/aem-auth-demo" mode="merge"/>
+    <filter root="/content/aem-auth-demo" mode="merge"/>
+    <filter root="/content/dam/aem-auth-demo" mode="merge">
+        <exclude pattern="/content/dam/aem-auth-demo(/.*)?"/>
+        <include pattern="/content/dam/aem-auth-demo/jcr:content(/.*)?"/>
+    </filter>
+    <filter root="/content/dam/aem-auth-demo/asset.jpg" mode="merge"/>
+    <filter root="/content/experience-fragments/aem-auth-demo" mode="merge"/>
+</workspaceFilter>

@@ -1,0 +1,29 @@
+#
+# This file contains the cache rules, and can be customized.
+#
+# By default, it includes the default rules.
+#
+
+$include "./default_rules.any"
+
+# Don't cache OIDC authenticated pages (user-specific content)
+/0100 {
+    /glob "/content/*/oauth2-authenticated*"
+    /type "deny"
+}
+/0101 {
+    /glob "*/oauth2-authenticated*"
+    /type "deny"
+}
+
+# Don't cache /bin servlets
+/0102 {
+    /glob "/bin/*"
+    /type "deny"
+}
+
+# Allow caching of error pages
+/0103 {
+    /glob "/content/*/error-*.html"
+    /type "allow"
+}
