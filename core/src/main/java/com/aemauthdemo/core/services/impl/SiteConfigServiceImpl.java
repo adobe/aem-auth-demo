@@ -16,7 +16,8 @@ public class SiteConfigServiceImpl implements SiteConfigService {
     @Activate
     @Modified
     protected void activate(SiteConfig config) {
-        this.publishHost = config.publishHost();
+        String host = config.publishHost().trim();
+        this.publishHost = host.endsWith("/") ? host.substring(0, host.length() - 1) : host;
     }
 
     @Override

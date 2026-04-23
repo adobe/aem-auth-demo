@@ -4,20 +4,31 @@ import com.aemauthdemo.core.services.SiteConfigService;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
 @Model(adaptables = Resource.class)
 public class AuthLinksModel {
 
-    @OSGiService
+    private static final Logger LOG = LoggerFactory.getLogger(AuthLinksModel.class);
+
+    @OSGiService(optional = true)
     private SiteConfigService siteConfigService;
 
     private String publishHost;
 
     @PostConstruct
     protected void init() {
-        publishHost = siteConfigService != null ? siteConfigService.getPublishHost() : "http://localhost:8085";
+        LOG.info("AuthLinksModel init: siteConfigService={}", siteConfigService);
+        if (siteConfigService != null) {
+            publishHost = siteConfigService.getPublishHost();
+            LOG.info("AuthLinksModel init: publishHost from service={}", publishHost);
+        } else {
+            publishHost = "http://localhost:8085";
+            LOG.warn("AuthLinksModel init: SiteConfigService not injected, falling back to {}", publishHost);
+        }
     }
 
     public String getPublishHost() {
@@ -25,6 +36,7 @@ public class AuthLinksModel {
     }
 
     public String getOauth2PageUrl() {
+        LOG.debug("AuthLinksModel getOauth2PageUrl: {}", publishHost);
         return publishHost + "/content/aem-auth-demo/us/en/oauth2-authenticated.html";
     }
 

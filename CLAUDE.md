@@ -97,7 +97,7 @@ All variables are defined in `.env` (copy from `env.example`):
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `AEM_QUICKSTART` | *(required)* | Path to AEM quickstart JAR |
-| `PUBLISH_URL` | `http://localhost:8085` | Public base URL for SP callback |
+| `PUBLISH_URL` | `http://localhost:8085` | Public base URL for authentication links. Used by `SiteConfigService` to build absolute links in the `authlinks` component. For RDE/Cloud set via `aio aem rde env set PUBLISH_URL https://publish-pXXXXX-eYYYYYY.adobeaemcloud.com` |
 | `KEYCLOAK_URL` | `http://keycloak:8080` | Internal Keycloak URL (Docker network) |
 | `KEYCLOAK_REALM` | `sling` | Realm name |
 | `KEYCLOAK_SAML_CLIENT_ID` | `test-saml` | Keycloak SAML client ID |
