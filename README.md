@@ -321,18 +321,43 @@ docker run --rm \
   quay.io/keycloak/keycloak:26.4.6 export --dir /opt/keycloak/data/export
 ```
 
-# Environment variables that can be customized for different idp
-OIDC_BASE_URL
-OIDC_CLIENT_ID
-OIDC_CLIENT_SECRET
+## Deploying to AEM Cloud Service with an External IdP
 
-SAML_IDP_REFERRER
-SAML_IDP_URL
-SAML_ALIAS
-SAML_LOGOUT_URL
+This demo can run against a real AEM as a Cloud Service environment (RDE, Stage, or Production) using an external Identity Provider such as Okta, Azure AD, or any OIDC-compliant IdP.
 
-# How to deploy to cloud
-Set in Cloud Manager the variable OIDC_CALLBACK. For example:
+### 1. Build and deploy the packages
+
+```bash
+# Build
+mvn clean install
+
+# Deploy to RDE
+aio aem rde deploy all/target/aem-auth-demo-project.all-*.zip
 ```
-OIDC_CALLBACK=https://publish-p148861-e340062-cmstg.adobeaemcloud.com
-```
+
+### 2. Set environment variables in Cloud Manager (or RDE)
+
+Set the following variables on the **Publish** tier via Cloud Manager → Environment → Variables:
+
+| Variable | Example value | Description |
+|----------|--------------|-------------|
+| `PUBLISH_URL` | `https://publish-p142456-e351003-cmstg.adobeaemcloud.com` | Public base URL of the publish tier, used to build absolute authentication links |
+| `OIDC_BASE_URL` | `https://your-org.okta.com/oauth2/default` | OIDC issuer base URL of your external IdP |
+| `OIDC_CALLBACK` | `https://publish-p142456-e351003-cmstg.adobeaemcloud.com` | Redirect base URL sent to the IdP after authentication (usually the same as `PUBLISH_URL`) |
+| `OIDC_CLIENT_ID` | `0oa2220tsg1wNgNyI1d8` | OAuth2 client ID registered in your IdP |
+| `OIDC_CLIENT_SECRET` | `gWbri7UXS2qy...` | OAuth2 client secret (**set as Secret type**, not plain Variable) |
+
+> **Note:** `OIDC_CLIENT_SECRET` should always be created as a **Secret** variable in Cloud Manager so it is encrypted at rest and never exposed in logs.
+
+### 3. SAML with an external IdP
+
+To use SAML against an external IdP instead of the bundled Keycloak, set:
+
+| Variable | Description |
+|----------|-------------|
+| `SAML_IDP_URL` | SAML SSO endpoint URL of the external IdP |
+| `SAML_IDP_REFERRER` | Expected `Referer` / entity ID of the IdP |
+| `SAML_ALIAS` | Alias of the IdP certificate imported into AEM's Global Truststore |
+| `SAML_LOGOUT_URL` | IdP single logout endpoint URL |
+
+For SAML, certificate exchange must be performed manually: export your IdP's signing certificate and import it into AEM's Global Truststore, then register AEM's SP certificate with your IdP.
