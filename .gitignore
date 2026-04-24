@@ -114,8 +114,9 @@ keycloak/export/
 .aio
 .cloudmanager/
 
-# Claude Code workspace config (personal)
-.claude/
+# Claude Code workspace config (personal — shared skills are tracked via .claude/skills/)
+.claude/*
+!.claude/skills
 
 # IDE
 .vscode/
