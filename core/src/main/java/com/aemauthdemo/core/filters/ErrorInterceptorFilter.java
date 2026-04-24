@@ -159,8 +159,12 @@ public class ErrorInterceptorFilter implements Preprocessor, Filter {
                     if (isOAuthError(exceptionMsg)) {
                         logger.warn("OAuth error detected from exception (status: {}, exception: '{}'), redirecting to {}",
                                    status, exceptionMsg, redirectPath);
-                        wrappedResponse.reset();
-                        httpResponse.sendRedirect(redirectPath);
+                        if (!httpResponse.isCommitted()) {
+                            wrappedResponse.reset();
+                            httpResponse.sendRedirect(redirectPath);
+                        } else {
+                            logger.warn("Cannot redirect to error page — response already committed");
+                        }
                         return;
                     }
                 }
@@ -171,22 +175,32 @@ public class ErrorInterceptorFilter implements Preprocessor, Filter {
                 if (isOAuth) {
                     logger.info("OAuth error detected from error message (status: {}, message: '{}'), redirecting to {}",
                                status, errorMsg, redirectPath);
-                    // Reset the wrapped response and redirect using the original response
-                    wrappedResponse.reset();
-                    httpResponse.sendRedirect(redirectPath);
+                    if (!httpResponse.isCommitted()) {
+                        wrappedResponse.reset();
+                        httpResponse.sendRedirect(redirectPath);
+                    } else {
+                        logger.warn("Cannot redirect to error page — response already committed");
+                    }
                     return;
                 } else {
                     logger.info("Error status {} but message doesn't match OAuth patterns (message: '{}'), propagating error",
                                status, errorMsg);
-                    // Not OAuth error, propagate the error status
-                    httpResponse.sendError(status, errorMsg != null ? errorMsg : "Internal Server Error");
+                    if (!httpResponse.isCommitted()) {
+                        httpResponse.sendError(status, errorMsg != null ? errorMsg : "Internal Server Error");
+                    } else {
+                        logger.debug("Error status {} but response already committed, cannot propagate", status);
+                    }
                     return;
                 }
             }
 
             // No error, flush the buffered content to actual response
             logger.debug("No error detected (status: {}), flushing buffered response", status);
-            wrappedResponse.flushBuffer();
+            if (!httpResponse.isCommitted()) {
+                wrappedResponse.flushBuffer();
+            } else {
+                logger.debug("Response already committed, skipping buffer flush");
+            }
 
         } catch (IllegalStateException e) {
             // Check if this is the OAuth authentication error
@@ -196,10 +210,13 @@ public class ErrorInterceptorFilter implements Preprocessor, Filter {
 
             if (isOAuthError(exceptionMessage)) {
                 logger.debug("OAuth authentication error detected, redirecting from {} to {}", requestPath, redirectPath);
-                // Reset buffered response and redirect
-                wrappedResponse.reset();
-                httpResponse.sendRedirect(redirectPath);
-                return;  // IMPORTANT: Stop processing after redirect
+                if (!httpResponse.isCommitted()) {
+                    wrappedResponse.reset();
+                    httpResponse.sendRedirect(redirectPath);
+                } else {
+                    logger.warn("Cannot redirect to error page — response already committed");
+                }
+                return;
             } else {
                 // Not the error we're looking for, re-throw
                 logger.debug("Exception doesn't match OAuth error criteria, re-throwing");
@@ -411,14 +428,26 @@ public class ErrorInterceptorFilter implements Preprocessor, Filter {
         }
 
         @Override
+        public void resetBuffer() {
+            // Only reset our internal buffer; never delegate to the underlying response,
+            // which may already be committed (e.g. after a partial Sling flush).
+            buffer.reset();
+        }
+
+        @Override
         public void reset() {
             wrapperLogger.debug("reset called");
-            super.reset();
             buffer.reset();
             this.status = SC_OK;
             this.errorMessage = null;
             this.writer = null;
             this.outputStreamCalled = false;
+            try {
+                super.reset();
+            } catch (IllegalStateException e) {
+                // Underlying response already committed; buffer reset is sufficient.
+                wrapperLogger.debug("Underlying response already committed, buffer reset only");
+            }
         }
 
         @Override
