@@ -1,3 +1,7 @@
+@.workspace-docs/ARCHITECTURE.md
+@.workspace-docs/REPOSITORIES.md
+@.workspace-docs/DEVELOPMENT.md
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.

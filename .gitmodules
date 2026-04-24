@@ -1,0 +1,4 @@
+[submodule ".workspace-docs"]
+	path = .workspace-docs
+	url = git@github.com:Adobe-AEM-Foundation/aem-security-workspace-config.git
+	branch = main
