@@ -36,7 +36,11 @@ import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({AemContextExtension.class, MockitoExtension.class})
 class ErrorInterceptorFilterTest {
@@ -164,8 +168,9 @@ class ErrorInterceptorFilterTest {
         HttpServletRequest req = request(PROTECTED_PATH + "/callback");
         HttpServletResponse res = mock(HttpServletResponse.class);
         when(res.isCommitted()).thenReturn(false);
-        // Underlying response simulates a committed state — resetBuffer() would throw
-        doThrow(new IllegalStateException("Committed")).when(res).resetBuffer();
+        // Underlying response simulates a committed state — resetBuffer() would throw.
+        // lenient() because the assertion is that this stub is NEVER reached (verify never()).
+        lenient().doThrow(new IllegalStateException("Committed")).when(res).resetBuffer();
 
         // Reproduces what Felix HTTP InvocationChain.doFilter does internally
         FilterChain chain = (rq, rs) -> {
